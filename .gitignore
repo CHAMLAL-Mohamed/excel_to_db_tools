@@ -1,0 +1,7 @@
+# Visual Studio Code # 
+.vscode/ 
+.idea/
+node_modules/
+
+
+local.settings.json
