@@ -1,6 +1,8 @@
 import logging
 import os
 import json
+import sys
+import re
 import argparse
 import pandas as pd
 from pandas.core.frame import DataFrame
@@ -29,12 +31,28 @@ def get_database_connection():
     con=psycopg2.connect(conn_string)
     return con
 
+def date(date):
+    datePattern=r'^(19|20)\d\d(-?)(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$'
+    if date is None:
+        print('specified None as date')
+
+    elif date=='fileName':
+        print('specified fileName as date')
+    elif date=='createdDate':
+        print('specified createdDate as date')
+    elif re.match(datePattern,date):
+        print('specified ',date,' as date')  
+    else :
+        print('no valide date format was provided')
+        raise ValueError
+    return date
+
 def get_arguments():
     parser=argparse.ArgumentParser(description='Upload Excel files to SQL DB')
     parser.add_argument('file',help='path of the file to upload into database')
     parser.add_argument('tableName',help='The name of the table to upload data to')
     # parser.add_argument('schema',default=None,help='The schema of thable, if table already exist use this for validation only')
-    parser.add_argument('-d','--date',help='the date of this file, if specified a column called date will be added to DB')
+    parser.add_argument('-d','--date',type=date,help='the date of this file, if specified a column called date will be added to DB')
     return parser.parse_args()
 
 def table_exist(DBconnection,tableName):
