@@ -47,9 +47,14 @@ def date(date):
         raise ValueError
     return date
 
+def file(path):
+    if not os.path.isfile(path):
+        raise ValueError
+    return path
+
 def get_arguments():
     parser=argparse.ArgumentParser(description='Upload Excel files to SQL DB')
-    parser.add_argument('file',help='path of the file to upload into database')
+    parser.add_argument('file',type=file,help='path of the file to upload into database')
     parser.add_argument('tableName',help='The name of the table to upload data to')
     # parser.add_argument('schema',default=None,help='The schema of thable, if table already exist use this for validation only')
     parser.add_argument('-d','--date',type=date,help='the date of this file, if specified a column called date will be added to DB')
@@ -91,7 +96,23 @@ def align_dataframe(dataframe,DBcolumns):
         dataframe.drop(column,axis='columns', inplace=True)
     
 
-
+def get_date_value(date,filePath):
+    datePattern=r'(19|20)\d\d(-?)(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])'
+    if re.match(datePattern,date):
+        return date
+    elif date=='fileName':
+        fileNameWithExt=os.path.basename(filePath)
+        fileName=os.path.splitext(fileNameWithExt)[0]
+        print(fileName)
+        date=re.search(datePattern,fileName).group()
+        print(date)
+        return date
+    elif date=='createdDate':
+        date=os.path.getctime(filePath)
+        return date
+    else:
+        raise ValueError
+    
 def run():
     args=get_arguments()
     #1.Get file and date from arguments
@@ -106,7 +127,7 @@ def run():
     data=pd.read_excel(path)
     #3.add date column if specified
     if date is not None:
-        data['date']=date
+        data['date']=get_date_value(date,path)
     #4.connect to DB( use engine)
     engine = sqlalchemy.create_engine(engine_string)
     conn=get_database_connection()
@@ -122,28 +143,3 @@ def run():
     conn.close()
 
 run()
-
-
-
-
-
-# def create_table():
-#     """
-#     Creates a table ready to accept our data.
-
-#     write code that will execute the given sql statement
-#     on the database
-#     """
-
-#     create_table = """ CREATE TABLE authors(
-#         ID          INTEGER PRIMARY KEY     AUTOINCREMENT,
-#         author      TEXT                NOT NULL,
-#         title       TEXT                NOT NULL,
-#         pages       INTEGER             NOT NULL,
-#         due_date    CHAR(15)            NOT NULL
-#     )   
-#     """
-#     con = get_database_connection()
-#     con.execute(create_table)
-#     con.close()
-
