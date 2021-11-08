@@ -58,7 +58,10 @@ def main(*args, **kwargs):
                 print(entry.name)
                 fullPath=os.path.abspath(os.path.join(args.path,entry.name))
                 tableName=os.path.basename(args.path).lower()
-                subprocess.run(["python","excel-to-db.py",fullPath,tableName,"-d",args.date],capture_output=True)
+                if args.date is None:
+                    subprocess.run(["python","excel-to-db.py",fullPath,tableName],capture_output=True)
+                else:
+                    subprocess.run(["python","excel-to-db.py",fullPath,tableName,"-d",args.date],capture_output=True)
     except NotADirectoryError:
         print("The provided path is not a directory, please check your arguments, Path: ",args.path)
 
