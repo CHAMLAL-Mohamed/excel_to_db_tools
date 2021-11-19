@@ -15,16 +15,10 @@ DB_NAME='cogi.db'
 #Define our connection string
 with open("local.settings.json", "r") as jsonConfigFile:
     config = json.load(jsonConfigFile)
-    print("Read successful")
     
 conn_string = config["CONNECTION_STRING"]
 engine_string=config["ENGINE_STRING"]
 
-# print the connection string we will use to connect
-# print ("Connecting to database\n", conn_string)
-
-# get a connection, if a connect cannot be made an exception will be raised here
-# conn = psycopg2.connect(conn_string)
 
 def get_database_connection():
     # con = sqlite3.connect(DB_NAME)
@@ -77,19 +71,13 @@ def get_table_columns(DBconnection,tableName):
     return columns
 def align_dataframe(dataframe,DBcolumns):
     DFcolumns=dataframe.columns.values.tolist()
-    print("df columns are")
     print(DFcolumns)
     DBOnlyColumns=list(set(DBcolumns)-set(DFcolumns))
-    print('columns in DB only')
-    print(DBOnlyColumns)
+
     for column in DBOnlyColumns:
         dataframe[column]=None
     DFcolumns=dataframe.columns.values.tolist()
-    print("df new columns are")
-    print(DFcolumns)
     DBOnlyColumns=list(set(DBcolumns)-set(DFcolumns))
-    print('new columns in DB only')
-    print(DBOnlyColumns)
     #drop extra columns from DF
     DFOnlyColumns=list(set(DFcolumns)-set(DBcolumns))
     for column in DFOnlyColumns:
@@ -137,7 +125,7 @@ def run():
     if table_exist(conn,tableName):
         DBcolumns=get_table_columns(conn,tableName)
         align_dataframe(data,DBcolumns)
-
+#TODO: 
     data.to_sql(tableName,engine,index=False,if_exists='append')
     #7.close DB connection 
     conn.close()
