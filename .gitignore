@@ -2,6 +2,6 @@
 .vscode/ 
 .idea/
 node_modules/
-
+*.xlsx
 
 local.settings.json
