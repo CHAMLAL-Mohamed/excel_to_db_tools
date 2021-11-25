@@ -101,15 +101,15 @@ def get_date_value(date,filePath):
     else:
         raise ValueError
     
-def run():
-    args=get_arguments()
-    #1.Get file and date from arguments
-    path=args.file
-    tableName=args.tableName
-    # schema=args.schema
-    date=None
-    if args.date is not None:
-        date=args.date
+def run(path,tableName,date=None,**kwargs):
+    # args=get_arguments()
+    # #1.Get file and date from arguments
+    # path=args.file
+    # tableName=args.tableName
+    # # schema=args.schema
+    # date=None
+    # if args.date is not None:
+        # date=args.date
     print('input file ',path, 'and date, ',date)
     #2.Get DataFrame from File
     data=pd.read_excel(path)
@@ -131,3 +131,9 @@ def run():
     conn.close()
 
 run()
+
+if __name__ == '__main__':
+    args=get_arguments()
+
+    run(vars(args))
+    
