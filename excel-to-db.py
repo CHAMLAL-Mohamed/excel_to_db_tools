@@ -129,8 +129,6 @@ def run():
     #7.close DB connection 
     conn.close()
 
-run()
-
 if __name__ == '__main__':
     run()
     

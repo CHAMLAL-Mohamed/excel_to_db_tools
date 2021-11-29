@@ -46,7 +46,7 @@ def main():
             config.at[index,'CreationDate']=datetime.datetime.strptime(time.ctime(os.path.getctime(file)),"%a %b %d %H:%M:%S %Y")
             print(config.at[index,'CreationDate'])
     config.to_excel("configuration.xlsx",index=False)
-    #TODO 4: create observer, and schedule for each folder
+
 
 
 
