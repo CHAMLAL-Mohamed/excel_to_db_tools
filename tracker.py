@@ -9,6 +9,7 @@ import logging
 import os
 import glob
 import datetime
+import subprocess
 # The Observer watches for any file change and then dispatches the respective events to an event handler.
 # from watchdog.observers import Observer
 # The event handler will be notified when an event occurs.
@@ -31,7 +32,20 @@ def main():
         new_files.sort(key=os.path.getctime)
         #TODO 3:for each newFile upload it to DB based on creteria defined in config, and save creationDate to configuration (if max)
         for file in new_files:
-            
+            #Upload the file to DB
+            path=file
+            tableName=row['TableName']
+            date=row['Date']
+            if date=='None':
+                date=None
+            if date is None:
+                subprocess.run(["python","excel-to-db.py",path,tableName])
+            else:
+                subprocess.run(["python","excel-to-db.py",path,tableName,"-d",date])
+            #Update creationDate in config, and save it to configuration file
+            config.at[index,'CreationDate']=datetime.datetime.strptime(time.ctime(os.path.getctime(file)),"%a %b %d %H:%M:%S %Y")
+            print(config.at[index,'CreationDate'])
+    config.to_excel("configuration.xlsx",index=False)
     #TODO 4: create observer, and schedule for each folder
 
 

@@ -5,7 +5,6 @@ import sys
 import re
 import argparse
 import pandas as pd
-from pandas.core.frame import DataFrame
 import sqlalchemy
 import psycopg2
 
@@ -67,11 +66,11 @@ def get_table_columns(DBconnection,tableName):
     columns=[]
     for column in cursor.fetchall():
         columns.append(column[0])
-    print(columns)
+    # print(columns)
     return columns
 def align_dataframe(dataframe,DBcolumns):
     DFcolumns=dataframe.columns.values.tolist()
-    print(DFcolumns)
+    # print(DFcolumns)
     DBOnlyColumns=list(set(DBcolumns)-set(DFcolumns))
 
     for column in DBOnlyColumns:
@@ -101,15 +100,15 @@ def get_date_value(date,filePath):
     else:
         raise ValueError
     
-def run(path,tableName,date=None,**kwargs):
-    # args=get_arguments()
-    # #1.Get file and date from arguments
-    # path=args.file
-    # tableName=args.tableName
-    # # schema=args.schema
-    # date=None
-    # if args.date is not None:
-        # date=args.date
+def run():
+    args=get_arguments()
+    #1.Get file and date from arguments
+    path=args.file
+    tableName=args.tableName
+    # schema=args.schema
+    date=None
+    if args.date is not None:
+        date=args.date
     print('input file ',path, 'and date, ',date)
     #2.Get DataFrame from File
     data=pd.read_excel(path)
@@ -133,7 +132,5 @@ def run(path,tableName,date=None,**kwargs):
 run()
 
 if __name__ == '__main__':
-    args=get_arguments()
-
-    run(vars(args))
+    run()
     
